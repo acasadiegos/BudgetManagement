@@ -1,0 +1,28 @@
+﻿@model AmountResumeViewModel
+
+<div class="contenedor-totales mb-3">
+        <div>
+        <div>
+            <strong>Deposits</strong>
+        </div>
+        <div class="activo">
+            @Model.Incomes.ToString("N")
+        </div>
+    </div>
+    <div>
+        <div>
+            <strong>Withdrawals</strong>
+        </div>
+        <div class="pasivo">
+            @Model.Egress.ToString("N")
+        </div>
+    </div>
+        <div>
+        <div>
+            <strong>Total</strong>
+        </div>
+        <div>
+            @Model.Total.ToString("N")
+        </div>
+    </div>
+</div>

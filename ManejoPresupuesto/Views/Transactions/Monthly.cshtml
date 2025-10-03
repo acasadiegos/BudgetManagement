@@ -1,0 +1,57 @@
+﻿@model MonthlyReportViewModel
+
+@{
+    ViewData["Title"] = "Monthly Report";
+    int previousYear = Model.Year - 1;
+    int nextYear = Model.Year + 1;
+    var amountResume = new AmountResumeViewModel()
+            {
+                Egress = Model.Egress,
+                Incomes = Model.Incomes,
+                Total = Model.Total
+            };
+}
+
+<partial name="_Submenu" Model="TransactionSubmenu.Monthly"/>
+
+<h4>
+    Showing transactions of
+    <a asp-route-year="@previousYear" class="btn btn-secondary">
+        <i class="bi-chevron-left"></i>
+    </a> @Model.Year
+    <a asp-route-year="@nextYear" class="btn btn-secondary">
+        <i class="bi-chevron-right"></i>
+    </a>
+</h4>
+
+<partial name="_AmountResume" model="@amountResume"/>
+
+<table class="table" style="font-size: 20px">
+    <thead>
+        <tr style="background-color: lightblue">
+            <th>Month</th>
+            <th style="text-align: right">Incomes</th>I
+            <th style="text-align: right">Egress</th>I
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var monthlyTransaction in Model.MonthlyTransactions)
+        {
+            <tr>
+                <td>
+                    <a style="text-decoration: none;" asp-action="Index"
+                    asp-route-year="@Model.Year" asp-route-month="@monthlyTransaction.Month">
+                        @monthlyTransaction.ReferenceDate.ToString("MMM")
+                    </a>
+                </td>
+                <td class="activo" style="text-align: right">
+                    @monthlyTransaction.Income
+                </td>
+                <td class="pasivo" style="text-align: right">
+                    @monthlyTransaction.Egress
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

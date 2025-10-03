@@ -1,0 +1,12 @@
+﻿@model DetailTransactionReport
+
+@{
+    ViewData["Title"] = "Daily Report";
+}
+
+<partial name="_Submenu" Model="TransactionSubmenu.Diary"/>
+
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-primary">Create new transaction</a>
+</div>
+<partial name="_DetailTransactionReport" model="Model"/>

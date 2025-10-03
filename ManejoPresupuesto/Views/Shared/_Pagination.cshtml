@@ -1,0 +1,50 @@
+﻿@model PaginationResponse
+
+@{
+    var templateLink = string.Concat(Model.BaseURL, "?page={0}&recordsPerPage={1}");
+    var activatePreviousButton = Model.Page > 1;
+    var activateNextButton = Model.Page < Model.TotalPages;
+}
+
+<nav>
+    <ul class="pagination">
+        <li class="page-item @(activatePreviousButton ? null : "disabled")">
+            @if (activatePreviousButton)
+            {
+               <a class="page-link"
+                    href="@string.Format(templateLink, Model.Page - 1, Model.RecordsPerPage)">
+                    Previous
+                </a>
+            }
+            else
+            {
+                <span class="page-link">Previous</span>
+            }
+
+        </li>
+
+        @for(var _page = 1; _page <= Model.TotalPages; _page ++)
+        {
+            <li class="page-item" @(_page == Model.Page ? "active" : null)>
+                <a class="page-link" href="@string.Format(templateLink, _page, Model.RecordsPerPage)">
+                    @_page
+                </a>
+            </li>
+        }
+
+        <li class="page-item @(activateNextButton ? null : "disabled")">
+            @if (activateNextButton)
+            {
+               <a class="page-link"
+                    href="@string.Format(templateLink, Model.Page + 1, Model.RecordsPerPage)">
+                    Next
+                </a>
+            }
+            else
+            {
+                <span class="page-link">Next</span>
+            }
+
+        </li>
+    </ul>
+</nav>

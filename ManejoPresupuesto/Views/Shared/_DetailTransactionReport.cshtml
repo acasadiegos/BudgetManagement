@@ -1,0 +1,55 @@
+﻿@model DetailTransactionReport
+
+@{
+    var amountResume = new AmountResumeViewModel()
+    {
+      Incomes = Model.DepositsBalance,
+      Egress = Model.WithDrawalsBalance,
+      Total = Model.Total
+    };
+}
+
+<partial name="_MonthNavigation" model="@Model.StartDate"/>
+<partial name="_AmountResume" model="@amountResume"/>
+
+@if (Model.GroupTransactions.Count() == 0)
+{
+    <h5>There is no data to show</h5>
+} else
+{
+    <table class="table">
+        <tbody>
+            @foreach(var groupTransaction in Model.GroupTransactions)
+            {
+                <tr style="background-color: lightblue; font-size: 26px">
+                    <td colspan="3">@groupTransaction.TransactionDate.Day 
+                        <span class="badge bg-secondary">
+                            @groupTransaction.TransactionDate.ToString("ddd")
+                        </span>
+                    </td>
+                    <td class="activo">@groupTransaction.DepositsBalance.ToString("N")</td>
+                    <td class="pasivo">@groupTransaction.WithDrawalsBalance.ToString("N")</td>
+                </tr>
+
+                @foreach(var transaction in groupTransaction.Transactions)
+                {
+                    <tr style="vertical-align: middle">
+                        <td>
+                            <a asp-controller="transactions" asp-action="edit" 
+                            asp-route-id="@transaction.Id" asp-route-urlRetorno="@ViewBag.urlRetorno">
+                                <i class="bi-pencil"></i>
+                            </a>
+                        </td>
+                        <td>@transaction.Categorie</td>
+                        <td>@transaction.Account</td>
+                        <td class="activo">@(transaction.OperationTypeId == OperationType.Income 
+                            ? transaction.Amount.ToString("N") : null)</td>
+                        <td class="pasivo">@(transaction.OperationTypeId == OperationType.Egress 
+                            ? transaction.Amount.ToString("N") : null)</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
