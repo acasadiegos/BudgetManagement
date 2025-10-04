@@ -90,7 +90,6 @@ namespace ManejoPresupuesto.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             var userId = _userService.GetUserId();

@@ -44,7 +44,7 @@
                         <td>@transaction.Account</td>
                         <td class="activo">@(transaction.OperationTypeId == OperationType.Income 
                             ? transaction.Amount.ToString("N") : null)</td>
-                        <td class="pasivo">@(transaction.OperationTypeId == OperationType.Egress 
+                        <td class="pasivo">@(transaction.OperationTypeId == OperationType.Expense 
                             ? transaction.Amount.ToString("N") : null)</td>
                     </tr>
                 }

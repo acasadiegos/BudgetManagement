@@ -41,7 +41,7 @@ namespace ManejoPresupuesto.Controllers
                 {
                     Week = x.Key,
                     Incomes = x.Where(x => x.OperationTypeId == OperationType.Income).Select(x => x.Amount).FirstOrDefault(),
-                    Egress = x.Where(x => x.OperationTypeId == OperationType.Egress).Select(x => x.Amount).FirstOrDefault()
+                    Egress = x.Where(x => x.OperationTypeId == OperationType.Expense).Select(x => x.Amount).FirstOrDefault()
                 }).ToList();
 
             if(year == 0 || month == 0)
@@ -106,7 +106,7 @@ namespace ManejoPresupuesto.Controllers
                     Month = x.Key,
                     Income = x.Where(x => x.OperationTypeId == OperationType.Income)
                         .Select(x => x.Amount).FirstOrDefault(),
-                    Egress = x.Where(x => x.OperationTypeId == OperationType.Egress)
+                    Egress = x.Where(x => x.OperationTypeId == OperationType.Expense)
                         .Select(x => x.Amount).FirstOrDefault()
                 }).ToList();
 
@@ -263,7 +263,7 @@ namespace ManejoPresupuesto.Controllers
                 Title = transaction.Amount.ToString("N"),
                 Start = transaction.TransactionDate.ToString("yyyy-MM-dd"),
                 End = transaction.TransactionDate.ToString("yyyy-MM-dd"),
-                Color = (transaction.OperationTypeId == OperationType.Egress) ? "Red" : null
+                Color = (transaction.OperationTypeId == OperationType.Expense) ? "Red" : null
             });
 
             return Json(calendarEvents);
@@ -330,7 +330,7 @@ namespace ManejoPresupuesto.Controllers
 
             model.UserId = userId;
 
-            if(model.OperationTypeId == OperationType.Egress)
+            if(model.OperationTypeId == OperationType.Expense)
             {
                 model.Amount *= -1;
             }
@@ -355,7 +355,7 @@ namespace ManejoPresupuesto.Controllers
 
             model.PreviousAmount = model.Amount;
 
-            if (model.OperationTypeId == OperationType.Egress)
+            if (model.OperationTypeId == OperationType.Expense)
             {
                 model.PreviousAmount = model.Amount * -1;
             }
@@ -397,7 +397,7 @@ namespace ManejoPresupuesto.Controllers
 
             var transaction = _mapper.Map<Transaction>(model);
 
-            if(model.OperationTypeId == OperationType.Egress)
+            if(model.OperationTypeId == OperationType.Expense)
             {
                 transaction.Amount *= -1;
             }

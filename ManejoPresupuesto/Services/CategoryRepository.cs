@@ -75,7 +75,7 @@ namespace ManejoPresupuesto.Services
         public async Task Delete(int id)
         {
             using var connection = new SqlConnection(_connectionString);
-            await connection.ExecuteAsync("@DELETE Categories WHERE Id = @Id", new {id});
+            await connection.ExecuteAsync(@"DELETE Categories WHERE Id = @Id", new {id});
         }
     }
 }

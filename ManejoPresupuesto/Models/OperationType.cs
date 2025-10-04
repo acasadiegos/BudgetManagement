@@ -3,6 +3,6 @@
     public enum OperationType
     {
         Income = 1,
-        Egress = 2
+        Expense = 2
     }
 }

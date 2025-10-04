@@ -13,14 +13,14 @@ BEGIN
 
     -- Insert statements for procedure here
 	
-	DECLARE @Efectivo nvarchar(50) ='Efectivo';
-	DECLARE @CuentasDeBanco nvarchar(50) = 'Cuentas de Banco';
-	DECLARE @Tarjetas nvarchar(50) = 'Tarjetas';
+	DECLARE @Cash nvarchar(50) ='Cash';
+	DECLARE @BankAccounts nvarchar(50) = 'Bank Accounts';
+	DECLARE @Cards nvarchar(50) = 'Cards';
 
 	INSERT INTO AccountTypes(Name, UserId, "Order")
-	VALUES (@Efectivo, @UserId, 1),
-	(@CuentasDeBanco, @UserId, 2),
-	(@Tarjetas, @UserId, 3);
+	VALUES (@Cash, @UserId, 1),
+	(@BankAccounts, @UserId, 2),
+	(@Cards, @UserId, 3);
 
 	INSERT INTO Accounts(Name, Balance, AccountTypeId)
 	SELECT Name, 0, Id
@@ -29,9 +29,9 @@ BEGIN
 
 	INSERT INTO Categories(Name, OperationTypeId, UserId)
 	VALUES
-	('Libros', 2, @UserId),
-	('Salario', 1, @UserId),
-	('Mesada', 1, @UserId),
-	('Comida', 2, @UserId);
+	('Books', 2, @UserId),
+	('Salary', 1, @UserId),
+	('Pension', 1, @UserId),
+	('Food', 2, @UserId);
 
 END

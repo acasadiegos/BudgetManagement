@@ -17,7 +17,7 @@
                 .Sum(x => x.Amount);
 
             public decimal WithDrawalsBalance =>
-                Transactions.Where(x => x.OperationTypeId == OperationType.Egress)
+                Transactions.Where(x => x.OperationTypeId == OperationType.Expense)
                 .Sum(x => x.Amount);
 
         }
