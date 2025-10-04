@@ -1,55 +1,67 @@
-# ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+trigger:
+  branches:
+    include:
+      - main     # rama principal del repo
 
-trigger: #Significa que este proceso de pipeline se va a disparar cuando se realice un cambio en la rama main.
-- main
-
-pool: 
-  vmImage: 'windows-2022' #Versión de la imagen de windows donde se compilará la aplicación
+pool:
+  vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln' #Variable de la solución.
-  mvcProject: 'ManejoPresupuesto/ManejoPresupuesto.csproj' #Path del csproj, en enste caso solo es uno.
-  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  publishDir: '$(Build.ArtifactStagingDirectory)/publish'
 
-steps: #Tareas o pasos que ejecutará el pipeline.
-- task: UseDotNet@2 
-  displayName: 'Install .NET 6'
-  inputs:
-    packageType: 'sdk'
-    version: '6.0.x' #Instalacion del SDK de .NET 6
-    
-- task: NuGetToolInstaller@1 #Usar el instalador de paquetes de Nuget.
+steps:
+  # 1️⃣ Instalar SDK de .NET 8
+  - task: UseDotNet@2
+    displayName: 'Instalar .NET 8 SDK'
+    inputs:
+      packageType: 'sdk'
+      version: '8.0.x'
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)' #Restore de la solución para reinstalar los paquetes de Nuget.
+  # 2️⃣ Restaurar dependencias
+  - task: DotNetCoreCLI@2
+    displayName: 'Restaurar dependencias'
+    inputs:
+      command: 'restore'
+      projects: '**/*.csproj'
 
-- task: VSBuild@1
-  displayName: 'Compile Solution'
-  inputs:
-    solution: '**\*.sln'
-    msbuildArgs: '/p:DSP=Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider'
-    configuration: '$(buildConfiguration)'
+  # 3️⃣ Compilar proyecto
+  - task: DotNetCoreCLI@2
+    displayName: 'Compilar'
+    inputs:
+      command: 'build'
+      projects: '**/*.csproj'
+      arguments: '--configuration $(buildConfiguration)'
 
-- task: CopyFiles@2
-  inputs:
-    Contents: '**/*.dacpac'
-    flattenFolders: true
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/db'
+  # 4️⃣ (Opcional) Ejecutar tests
+  # - task: DotNetCoreCLI@2
+  #   displayName: 'Ejecutar tests'
+  #   inputs:
+  #     command: 'test'
+  #     projects: '**/*Tests.csproj'
+  #     arguments: '--configuration $(buildConfiguration)'
 
+  # 5️⃣ Publicar artefactos
+  - task: DotNetCoreCLI@2
+    displayName: 'Publicar app'
+    inputs:
+      command: 'publish'
+      publishWebProjects: true
+      arguments: '--configuration $(buildConfiguration) --output $(publishDir)'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Building the artifacts'
-  inputs:
-    command: 'publish'
-    projects: $(mvcProject)
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/webapp --runtime win-x86 --self-contained'
-    zipAfterPublish: false
-    modifyOutputPath: false
+  # 6️⃣ Subir artefacto (para que quede guardado en Azure DevOps)
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publicar artefacto en Azure DevOps'
+    inputs:
+      PathtoPublish: '$(publishDir)'
+      ArtifactName: 'drop'
+      publishLocation: 'Container'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publishing the artifacts'
+  # 7️⃣ Desplegar a Azure App Service
+  - task: AzureWebApp@1
+    displayName: 'Desplegar a Azure App Service'
+    inputs:
+      azureSubscription: 'azure-budgetmanagement-conn'   # Nombre del Service Connection
+      appType: 'webApp'
+      appName: '$(webAppName)'                        # Nombre del App Service
+      package: '$(publishDir)'
